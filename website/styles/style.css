@@ -1,0 +1,74 @@
+/* Conçu par Mathis R.
+ * Année 2021/2022
+ */
+
+body{
+	background: linear-gradient(0.25turn, #536976, #bdc3c7, #2c3e50);
+}
+
+.zone{
+	display: flex;
+  	justify-content: center;
+  	align-items: center;
+  	flex-direction: column;
+  	text-align: center;
+
+  	min-height: 70vh;
+  	margin: 15vh;
+  	border-radius: 100px;
+
+  	background-color: rgba(242, 242, 242, 0.7);
+
+	box-shadow: 5px 5px 10px 5px #333333;
+}
+
+
+
+.container{
+	height: 20vh;
+	width: 110vh;
+}
+.row{
+	padding: 2vh;
+}
+
+button{
+	border: 2px solid #333333; 
+	background-color: #333333;
+	color: white;
+	font-size: 20px;
+	height: 5vh;
+	width: 15vh;
+	border-radius: 15% / 60%;
+	box-shadow: 3px 3px 3px black;
+}
+button:hover{
+	transition: 0.2s;
+	background-color: white;
+	color: black;
+	box-shadow: 3px 3px 3px black;
+}
+
+.content{
+	display: flex;
+  	justify-content: center;
+  	align-items: center;
+
+	height: 7vh;
+	width: 26vh;
+	background-color: white;
+
+	border-radius: 10px;
+	border: 2px solid #333333; 
+	box-shadow: 3px 3px 3px #333333;
+
+	margin-top: 2vh;
+	margin-bottom: 2vh;
+}
+
+#fail{
+	color: red;
+	font-weight: bold;
+	font-size: 3em;
+	visibility: hidden;
+}
