@@ -10,6 +10,8 @@ class Mot{
 		this.score=-1;
 		this.IT = 0; // Initiation time
 		this.MT = 0; // Movement time
+		this.coordonneeX = [];
+        this.coordonneeY = [];
 	}
 
 	affiche(){
@@ -87,15 +89,63 @@ class ListeMots{
 
 }
 
-let liste1 = new ListeMots(5,5,0);
-liste1.affiche();
+
+/* Training phase : 50% congruents 
+ * Première paire : 80% congruents
+ * Deuxième paire : 20% congruents
+ */
+
+let liste_training = new ListeMots(1,1,0);
+let liste_1 = new ListeMots(4,1,0);
+let liste_2 = new ListeMots(4,1,0);
+let liste_3 = new ListeMots(1,4,0);
+let liste_4 = new ListeMots(1,4,0);
+
+let liste_n = 0;
+let NB_LISTES = 4
+
+//let liste1 = new ListeMots(5,5,0);
+//liste1.affiche();
+let liste1 = null;
+
 let chrono = 0;
 let MT = 0;
 let IT = 0;
 let estSorti = false;
+let mousetrack = false;
+
+
+
+/* La fonction current_liste() renvoie la liste sur laquelle on travaille 
+ * (phase training, 1, 2 etc.)
+ */
+function current_liste(){
+	switch(liste_n){
+		case 0:
+			return liste_training;
+			break;
+		case 1:
+			return liste_1;
+			break;
+		case 2:
+			return liste_2;
+			break;
+		case 3:
+			return liste_3;
+			break;
+		case 4:
+			return liste_4;
+			break;
+		default:
+			console.log("Erreur : mauvais indice liste_n : "+liste_n);
+	}
+}
+
 
 function genere_mot(mot,couleur){
-	cache_start();
+	if(couleur!="black"){
+		cache_start();
+	}
 	console.log("Start pressed");
 	//On retire le mot précédent
 	let elementExists = document.getElementById("mot")
@@ -106,22 +156,27 @@ function genere_mot(mot,couleur){
 	//On ajoute un nouveau mot 
 	let element = document.createElement("h1");
 	element.setAttribute('id', "mot");
-	element.setAttribute('style', "color:"+couleur);
+	if(couleur=="black"){
+		element.setAttribute('style', "color: black; font-size: 1.6em;");
+	}else{
+		element.setAttribute('style', "color:"+couleur);
+	}
 	element.innerHTML = mot;
 
 	document.getElementById("content").appendChild(element);
-
 }
+
+
 
 function cache_start(){
-	//document.getElementById("start").style.visibility = "hidden";
+	document.getElementById("start").style.visibility = "hidden";
 	document.getElementById("start").style.opacity = "0";
-	document.getElementById("startButton").disabled = "disabled";
+	//document.getElementById("startButton").disabled = "disabled";
 }
 function affiche_start(){
-	//document.getElementById("start").style.visibility = "visible";
+	document.getElementById("start").style.visibility = "visible";
 	document.getElementById("start").style.opacity = "1";
-	document.getElementById("startButton").removeAttribute("disabled");
+	//document.getElementById("startButton").removeAttribute("disabled");
 }
 
 function cache_fail(){
@@ -168,7 +223,7 @@ function shuffle(array) {
 
 
 function mouseLeave(){
-	//console.log("On sort du bouton (estSorti = true)");
+	console.log("On sort du bouton (estSorti = true)");
 	if(!estSorti){
 		IT = parseInt(Date.now())-parseInt(chrono);
 		console.log("On sort du bouton, IT = "+IT);
@@ -193,14 +248,25 @@ function plusVite(){
 
 
 function suivant(){
+	mousetrack = true;
+	liste1 = current_liste();
 	iL = liste1.indice;
 	console.log("indiceListe = "+iL);
 	if(iL<liste1.liste.length){
 		genere_mot(liste1.liste[iL].mot,liste1.liste[iL].couleur);
 		liste1.indice++;
+	}else if(liste_n < NB_LISTES){
+		liste_n++;
+		console.log("Phase "+liste_n);
+		genere_mot("Next phase ...","black");
 	}else{
 		console.log("Partie terminée.");
 		afficheScore();
+		//Ici on exporte les données 
+		affiche_data(liste_1,"1");
+		affiche_data(liste_2,"2");
+		affiche_data(liste_3,"3");
+		affiche_data(liste_4,"4");
 	}
 	chrono = Date.now();
 
@@ -209,6 +275,8 @@ function suivant(){
 }
 
 function repondre(couleur){
+	mousetrack = false;
+	liste1 = current_liste();
 
 	//Calcul le temps de réaction de l'utilisateur en millisecondes 
 	MT = parseInt(Date.now())-parseInt(chrono);
@@ -247,15 +315,27 @@ function repondre(couleur){
 }
 
 function getScore(){
+	//liste1 = current_liste();
 	let score = 0;
-	for(let i=0;i<liste1.liste.length;i++){
-		score = score + liste1.liste[i].score;
+	for(let i=0;i<liste_1.liste.length;i++){
+		score = score + liste_1.liste[i].score;
 	}
-	console.log("Votre score est : "+score+" / "+liste1.liste.length);
+	for(let i=0;i<liste_2.liste.length;i++){
+		score = score + liste_2.liste[i].score;
+	}
+	for(let i=0;i<liste_3.liste.length;i++){
+		score = score + liste_3.liste[i].score;
+	}
+	for(let i=0;i<liste_4.liste.length;i++){
+		score = score + liste_4.liste[i].score;
+	}
+	let taille = parseInt(liste_1.liste.length)+parseInt(liste_2.liste.length)+parseInt(liste_3.liste.length)+parseInt(liste_4.liste.length);
+	console.log("Votre score est : "+score+" / "+taille);
 	return score;
 }
 
 function afficheScore(){
+	//liste1 = current_liste();
 
 	//On retire le mot précédent
 	let elementExists = document.getElementById("mot")
@@ -266,11 +346,50 @@ function afficheScore(){
 	let element = document.createElement("h1");
 	element.setAttribute('id', "mot");
 	element.setAttribute('style', "font-size: 2em;");
-	element.innerHTML = "Score : "+getScore()+" / "+liste1.liste.length;
+	let taille = parseInt(liste_1.liste.length)+parseInt(liste_2.liste.length)+parseInt(liste_3.liste.length)+parseInt(liste_4.liste.length);
+	element.innerHTML = "Score : "+getScore()+" / "+taille;
 
 	document.getElementById("content").appendChild(element);
 }
 
+function affiche_data(L,idSequence){
+	let congruence;
+	let score;
+
+	for(let i=0;i<L.liste.length;i++){
+		if(L.liste[i].type == 1){
+			congruence = "Congruent";
+		}else if(L.liste[i].type == 2){
+			congruence = "Non congruent";
+		}else{
+			congruence = "3";
+		}
+
+		if(L.liste[i].score == 1){
+			score = "Succès";
+		}else{
+			score = "Echec";
+		}
+
+		console.log("idSequence : "+idSequence
+			+"; Type mot : "+congruence
+			+"; Score : "+score
+			+"; IT : "+L.liste[i].IT
+			+"; MT : "+L.liste[i].MT);
+		
+	}
+}
+
+document.onmousemove = (event) => {
+    if (mousetrack && current_liste().liste[current_liste().indice-1] != null) {
+        //console.log("true");
+        //console.log(event.clientX);
+        //console.log(event.clientY);
+        current_liste().liste[current_liste().indice-1].coordonneeX.push(event.clientX);
+        current_liste().liste[current_liste().indice-1].coordonneeY.push(event.clientY);
+    }
+
+}
 
 /*
 function closeModal() {
