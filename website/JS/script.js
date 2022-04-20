@@ -102,7 +102,8 @@ let liste_3 = new ListeMots(1,4,0);
 let liste_4 = new ListeMots(1,4,0);
 
 let liste_n = 0;
-let NB_LISTES = 4
+let NB_LISTES = 4;
+let enregistre = true;
 
 //let liste1 = new ListeMots(5,5,0);
 //liste1.affiche();
@@ -113,6 +114,7 @@ let MT = 0;
 let IT = 0;
 let estSorti = false;
 let mousetrack = false;
+let dataJSON = { "score": "", "nom": "test", "ListeMot": []}
 
 
 
@@ -259,14 +261,18 @@ function suivant(){
 		liste_n++;
 		console.log("Phase "+liste_n);
 		genere_mot("Next phase ...","black");
-	}else{
-		console.log("Partie terminée.");
+	}else if(enregistre){
+		enregistre = false;
 		afficheScore();
 		//Ici on exporte les données 
 		affiche_data(liste_1,"1");
 		affiche_data(liste_2,"2");
 		affiche_data(liste_3,"3");
 		affiche_data(liste_4,"4");
+		dataJSON["score"] = getScore();
+		savedata(dataJSON);
+	}else{
+		console.log("Partie terminée.");
 	}
 	chrono = Date.now();
 
@@ -370,6 +376,7 @@ function affiche_data(L,idSequence){
 		}else{
 			score = "Echec";
 		}
+		dataJSON["ListeMot"].push(L.liste[i]);
 
 		console.log("idSequence : "+idSequence
 			+"; Type mot : "+congruence
@@ -378,6 +385,7 @@ function affiche_data(L,idSequence){
 			+"; MT : "+L.liste[i].MT);
 		
 	}
+	console.log(dataJSON);	
 }
 
 document.onmousemove = (event) => {
@@ -391,21 +399,20 @@ document.onmousemove = (event) => {
 
 }
 
-/*
-function closeModal() {
-    var modal = document.getElementById('modal');
-    modal.style.display = "none";
+function savedata(data) {
+
+  // Creating a XHR object
+  let xhr = new XMLHttpRequest();
+  let url = "../savedata.php";
+
+  // open a connection
+  xhr.open ("POST", url, true);
+
+  // Set the request header i.e. which type of content you are sending
+  xhr.setRequestHeader ("Content-Type", "application/json");
+
+  // Sending data with the request
+  xhr.send (JSON.stringify (data));
+
 }
-
-window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
-}
-
-function showModal() {
-    var modal = document.getElementById('modal');
-    modal.style.display = "block";
-}*/
-
 
