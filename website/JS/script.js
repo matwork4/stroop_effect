@@ -95,11 +95,11 @@ class ListeMots{
  * Deuxième paire : 20% congruents
  */
 
-let liste_training = new ListeMots(1,1,0);
-let liste_1 = new ListeMots(4,1,0);
-let liste_2 = new ListeMots(4,1,0);
-let liste_3 = new ListeMots(1,4,0);
-let liste_4 = new ListeMots(1,4,0);
+let liste_training = new ListeMots(2,2,0);
+let liste_1 = new ListeMots(8,2,0);
+let liste_2 = new ListeMots(8,2,0);
+let liste_3 = new ListeMots(2,8,0);
+let liste_4 = new ListeMots(2,8,0);
 
 let liste_n = 0;
 let NB_LISTES = 4;
@@ -114,8 +114,31 @@ let MT = 0;
 let IT = 0;
 let estSorti = false;
 let mousetrack = false;
-let dataJSON = { "score": "", "nom": "test", "ListeMot": []}
+let userID = makeid(8);
+let dataJSON = { "score": "", "nom": userID, "ListeMot": []}
+ajoutVueID();
 
+
+
+
+/* La fonction makeid permet de générer un ID aléatoire d'une taille définit.
+*/
+function makeid(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * 
+ charactersLength));
+   }
+   return result;
+}
+
+/* Fonction pour ajouter l'ID a la vue
+*/
+function ajoutVueID(){
+	document.getElementById("iciID").textContent += userID;
+}
 
 
 /* La fonction current_liste() renvoie la liste sur laquelle on travaille 
@@ -301,7 +324,7 @@ function repondre(couleur){
 			liste1.liste[iL].score=1;
 			setTimeout(() => { 
 				affiche_start();
-			}, 300);
+			}, 500);
 		}else{
 			console.log("Mauvaise réponse");
 			liste1.liste[iL].score=0;
@@ -309,7 +332,7 @@ function repondre(couleur){
 			setTimeout(() => { 
 				cache_fail(); 
 				affiche_start();
-			}, 5000);
+			}, 2000);
 		}
 		//On ajoute le temps de réaction au mot
 		liste1.liste[iL].MT=MT;
